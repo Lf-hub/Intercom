@@ -1,0 +1,15 @@
+# Arquivos de configura??o do sistema
+*.pyc
+.DS_Store
+
+# Arquivos de m?dia e arquivos est?ticos gerados
+/media/
+/static/
+
+# Arquivo de banco de dados local do SQLite
+db.sqlite3
+
+# Diret?rio virtualenv (se voc? estiver usando)
+/venv/
+
+__pycache__
