@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    <main class="container">
+        <table class="table">
+            <thead class="body-title">
+                <tr>
+                    <th class="col-md-1" style="text-align: center;">Produto</th>
+                    <th class="col-md-1" style="text-align: center;">Preço</th>
+                    <th class="col-md-2" style="text-align: center;">Estoque Atual</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in object_list %}
+                    <tr class="body-line" style="border-left-color:gray">
+                        <td class="col-md-1" style="text-align: center;">{{ row }}</td>
+                        <td class="col-md-2" style="text-align: center;">{{ row.price}}</td>
+                        <td class="col-md-2" style="text-align: center;">{{ row.stock_current }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table> 
+    </main>
+</div>
+{% endblock content %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="{% url 'core:create_product' %}" method="POST">
+        {% csrf_token %}
+        <main class="container">
+            {% for message in messages %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="alert alert-info">
+                            {{ message }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="form-row">
+                <div class="form-group col-md-9">
+                    <label>Nome</label>
+                    <input type="text" class="form-control" name="product" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Unidade</label>
+                    <select class="form-control" name="product_type">
+                        <option value="cx">Caixa</option>
+                        <option value="pcts">Pacote</option>
+                        <option value="grf">Garrafa</option>
+                        <option value="gl">Galão</option>
+                        <option value="cp">Copo</option>
+                        <option value="fltr">Filtro</option>
+                        <option value="bb">Bomba</option>
+                        <option value="sp">Suporte</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-3">
+                    <label>Valor</label>
+                    <input type="text" class="form-control" name="price" pattern="\d+,?\d{0,2}" placeholder="Ex: 1598,99" step=".01"required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Quantidade na embalagem</label>
+                    <input type="text" class="form-control" name="stock_current" pattern="\d+,?\d{0,2}" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Quantidade de embalagens</label>
+                    <input type="text" class="form-control" name="stock_mini" pattern="\d+,?\d{0,2}" required>
+                </div>
+                <div class="form-group col-md-3">
+                    <label>Volume</label>
+                    <select class="form-control" name="produtc_vol">
+                        <option value="ml">Mililitro</option>
+                        <option value="l">Litro</option>
+                        <option value="pc">Unidade</option>
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </main>
+    </form>
+{% endblock content %}
