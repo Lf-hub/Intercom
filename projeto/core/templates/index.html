@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load filter %}
 {% block content %}
 <div>
     <main class="container">
@@ -7,9 +7,9 @@
             <thead class="body-title">
                 <tr>
                     <th>Produto</th>
-                    <th>Unidade</th>
-                    <th>Total de embalagens</th>
-                    <th>Valor Total</th>
+                    <th style="text-align: center;">Unidade</th>
+                    <th style="text-align: center;">Total</th>
+                    <th style="text-align: center;">Valor Unitário</th>
                     <th></th>
                 </tr>
             </thead>
@@ -17,11 +17,16 @@
                 {% for row in object_list %}
                     <tr class="body-line" style="border-left-color:gray">
                         <td>{{ row }}</td>
-                        <td>{{ row.product_type }}</td>
-                        <td>{{ row.stock_current }}</td>
-                        <td>{{ row.price }}</td>
-                        <td><a href="{% url 'core:detail_product' row.pk %}"><button type="button"></button> 
-                        </a></td>
+                        {% if row.product_type %}
+                            <td style="text-align: center;">{{ row.product_type|convert_type }}</td>
+                        {% endif %}
+                        <td style="text-align: center;">{{ row.stock_current }}</td>
+                        <td style="text-align: center;">R$ {{ row.price }}</td>
+                        <td style="text-align: right;">
+                            <a href="{% url 'core:detail_product' row.pk %}" class="btn btn-warning" type="button">Detalhes</a>
+                            <a href="{% url 'core:update_product' row.pk %}" class="btn btn-info" type="button">Editar</a>
+                            <a href="{% url 'core:delete_product' row.pk %}" class="btn btn-danger"><i class="fa fa-times"></i> Deletar</a>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>

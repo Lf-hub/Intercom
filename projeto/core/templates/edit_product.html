@@ -1,17 +1,18 @@
 {% extends "base.html" %}
-
+{% load filter %}
 {% block content %}
-    <form action="{% url 'core:create_product' %}" method="POST">
+    <form action="{% url 'core:update_product' object.pk %}" method="POST">
         {% csrf_token %}
         <main class="container">
             <div class="form-row">
                 <div class="form-group col-md-9">
                     <label>Produto</label>
-                    <input type="text" class="form-control" name="product" required>
+                    <input type="text" class="form-control" value="{{object}}" name="product" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Unidade</label>
                     <select class="form-control" name="product_type">
+                        <option value="{{object.product_type}}">{{object.product_type|convert_type}}</option>
                         <option value="cx">Caixa</option>
                         <option value="pcts">Pacote</option>
                         <option value="grf">Garrafa</option>
@@ -26,27 +27,28 @@
             <div class="form-row">
                 <div class="form-group col-md-3">
                     <label>Valor Unitário</label>
-                    <input type="number" class="form-control" name="price" pattern="\d+,?\d{0,2}" placeholder="Ex: 1598,99" step=".01"required>
+                    <input type="text" class="form-control" value="{{object.price}}" name="price" pattern="\d+,?\d{0,2}">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Quantidade na embalagem</label>
-                    <input type="number" class="form-control" name="stock_mini" pattern="\d+,?\d{0,2}">
+                    <input type="number" class="form-control" value="{{object.stock_mini}}" name="stock_mini" pattern="\d+,?\d{0,2}">
                 </div>
                 <div class="form-group col-md-3">
                     <label>Quantidade de embalagens</label>
-                    <input type="number" class="form-control" name="stock_current" pattern="\d+,?\d{0,2}" required>
+                    <input type="number" class="form-control" value="{{object.stock_current}}" name="stock_current" pattern="\d+,?\d{0,2}" required>
                 </div>
                 <div class="form-group col-md-3">
                     <label>Volume</label>
                     <select class="form-control" name="produtc_vol">
+                        <option value="{{object.produtc_vol}}">{{object.produtc_vol|convert_vol}}</option>
                         <option value="ml">Mililitro</option>
                         <option value="l">Litro</option>
                         <option value="pc">Unidade</option>
                     </select>
                 </div>
             </div>
-            <a href="{% url 'core:index' %}" class="btn btn-primary">Voltar</a>
             <button type="submit" class="btn btn-primary">Salvar</button>
+            <a href="{% url 'core:index' %}" class="btn btn-primary">Voltar</a>
         </main>
     </form>
 {% endblock content %}
