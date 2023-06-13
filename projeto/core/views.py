@@ -1,16 +1,10 @@
-from typing import Any
-from django.forms.models import BaseModelForm
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.http import HttpRequest, HttpResponse
-from django.views.generic import ListView, CreateView
-from core.models import StockModel, ProductModel
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from core.models import ProductModel
 from core.forms import CreateProductForm
 
 class IndexView(ListView):
-    """
-    Tela inicial de Produtos
-    """
     model = ProductModel
     template_name = 'index.html'
 
@@ -32,3 +26,15 @@ class CreateProduct(CreateView):
         else:
             messages.add_message(request, messages.ERROR, 'Error ao salvar o produto!')
         return redirect("core:create_product")
+
+
+class DetailProductView(DetailView):
+    model = ProductModel
+    template_name = 'create_product.html'
+    form_class = CreateProductForm
+
+
+class UpdateProductView(UpdateView):
+    model = ProductModel
+    template_name = 'create_product.html'
+    form_class = CreateProductForm

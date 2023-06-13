@@ -33,7 +33,7 @@ class TimeLineModel(models.Model):
 
 class ProductModel(models.Model):
     product = models.CharField(verbose_name=('Nome'), max_length=100, unique=True)
-    price = models.DecimalField(verbose_name=('Preço'), max_digits=7, decimal_places=2)
+    price = models.DecimalField(verbose_name=('Preço Unitário'), max_digits=7, decimal_places=2)
     stock_current = models.IntegerField(verbose_name=('Quantidade'))
     product_type = models.CharField(max_length=4, choices=PRODUCT_TYPE, blank=True, null=True)
     produtc_vol = models.CharField(max_length=4, choices=PRODUCT_VOL, blank=True, null=True)

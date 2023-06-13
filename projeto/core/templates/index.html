@@ -6,17 +6,22 @@
         <table class="table">
             <thead class="body-title">
                 <tr>
-                    <th class="col-md-1" style="text-align: center;">Produto</th>
-                    <th class="col-md-1" style="text-align: center;">Preço</th>
-                    <th class="col-md-2" style="text-align: center;">Estoque Atual</th>
+                    <th>Produto</th>
+                    <th>Unidade</th>
+                    <th>Total de embalagens</th>
+                    <th>Valor Total</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in object_list %}
                     <tr class="body-line" style="border-left-color:gray">
-                        <td class="col-md-1" style="text-align: center;">{{ row }}</td>
-                        <td class="col-md-2" style="text-align: center;">{{ row.price}}</td>
-                        <td class="col-md-2" style="text-align: center;">{{ row.stock_current }}</td>
+                        <td>{{ row }}</td>
+                        <td>{{ row.product_type }}</td>
+                        <td>{{ row.stock_current }}</td>
+                        <td>{{ row.price }}</td>
+                        <td><a href="{% url 'core:detail_product' row.pk %}"><button type="button"></button> 
+                        </a></td>
                     </tr>
                 {% endfor %}
             </tbody>
