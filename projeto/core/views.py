@@ -1,8 +1,8 @@
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
-from core.models import ProductModel
-from core.forms import CreateProductForm
+from core.models import ProductModel, StockLineModel
+from core.forms import CreateProductForm, SaleProductForm
 
 class IndexView(ListView):
     model = ProductModel
@@ -64,4 +64,8 @@ class DeleteProductView(DeleteView):
         self.object = self.get_object()
         self.object.delete()
         return redirect("core:index")
-        
+
+class SaleProduct(CreateView):
+    model = StockLineModel
+    template_name = 'sale_product.html'
+    form_class = SaleProductForm
