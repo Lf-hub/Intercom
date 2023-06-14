@@ -1,8 +1,11 @@
-from django.shortcuts import redirect, resolve_url, render
+from decimal import Decimal
+
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.forms import inlineformset_factory
+from django.shortcuts import redirect, resolve_url, render
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
+
 from core.models import ProductModel, StockLineModel, StockModel
 from core.forms import CreateProductForm, StockLineProductForm, StockProductForm
 
@@ -40,23 +43,19 @@ class UpdateProductView(UpdateView):
     form_class = CreateProductForm
 
     def post(self, request, *args, **kwargs):
-        price = self.request.POST.get('price').replace(',','.')
-        if self.request.POST.get('stock_mini'):
-            mini = int(self.request.POST.get('stock_mini'))
-        else:
-            mini = 0
-        data = {
-            "product":self.request.POST.get('product'),
-            "price":float(price),
-            "stock_current":self.request.POST.get('stock_current'),
-            "product_type":self.request.POST.get('product_type'),
-            "produtc_vol":self.request.POST.get('produtc_vol'),
-            "stock_mini": mini
-        }
-        obj, created = ProductModel.objects.update_or_create(
-                                product=self.request.POST.get('product'),
-                                defaults=data
-                            )
+        instance = self.get_object()  # Obtenha o objeto existente
+
+        # Atualize os campos do objeto com os novos valores
+        instance.price = float(self.request.POST.get('price').replace(',', '.'))
+        instance.stock_mini = int(self.request.POST.get('stock_mini', 0))
+        instance.product = self.request.POST.get('product')
+        instance.stock_current = self.request.POST.get('stock_current')
+        instance.product_type = self.request.POST.get('product_type')
+        instance.produtc_vol = self.request.POST.get('produtc_vol')
+
+        # Salve o objeto atualizado
+        instance.save()
+
         return redirect("core:index")
 
 class DeleteProductView(DeleteView):
@@ -86,6 +85,32 @@ def SaleProduct(request):
             form.save()
             formset.save()
             url = 'core:index'
+            if request.POST.get('main-movement') == 'e':
+                for position in range(int(request.POST.get('estoque-TOTAL_FORMS'))):
+                    prod = ProductModel.objects.get(pk=int(request.POST.get(f'estoque-{position}-product')))
+                    stock = prod.stock_current
+                    stock_amount = stock*prod.price
+                    by_stock = int(request.POST.get(f'estoque-{position}-balance'))
+                    price = Decimal(str(float(request.POST.get(f'estoque-{position}-amount'))))
+                    by_amount = by_stock * price
+                    amount_total = stock_amount + by_amount
+                    stock_current = stock + by_stock
+                    prod.price = amount_total / stock_current
+                    prod.stock_current = stock_current
+                    prod.save()
+            else:
+                for position in range(int(request.POST.get('estoque-TOTAL_FORMS'))):
+                    prod = ProductModel.objects.get(pk=int(request.POST.get(f'estoque-{position}-product')))
+                    stock = prod.stock_current
+                    stock_amount = stock*prod.price
+                    by_stock = int(request.POST.get(f'estoque-{position}-balance'))
+                    price = Decimal(str(float(request.POST.get(f'estoque-{position}-amount'))))
+                    by_amount = by_stock * price
+                    amount_total = stock_amount - by_amount
+                    stock_current = stock - by_stock
+                    prod.price = amount_total / stock_current
+                    prod.stock_current = stock_current
+                    prod.save()
             return HttpResponseRedirect(resolve_url(url))
     else:
         form = StockProductForm(instance=stock_form, prefix='main')
