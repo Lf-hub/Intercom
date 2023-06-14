@@ -37,7 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Apps externos
     'bootstrap4',
+    'bootstrapform',
+    'widget_tweaks',
+    # Meus apps
     'core',
 ]
 

@@ -1,31 +1,92 @@
 {% extends "base.html" %}
+{% load widget_tweaks %}
+{% load bootstrap %}
+
+{% block css %}
+<style>
+    .form-control {
+        margin: 10px;
+    }
+</style>
+{% endblock css %}
 
 {% block content %}
-    <form action="{% url 'core:sale_product' %}" method="POST">
+    <form method="POST" novalidate>
         {% csrf_token %}
         <main class="container">
-            <div class="form-row">
-                <div class="form-group col-md-9">
-                    <label>Vendedor</label>
-                    <input type="text" class="form-control" name="product" required>
-                </div>
-                <div class="form-group col-md-9">
-                    <label>Produto</label>
-                    <input type="text" class="form-control" name="product" required>
+            <div class="row">
+                <div class="col-sm-6">
+                {% for field in form.visible_fields %}
+                    <div class="form-group{% if field.erros %} has-error {% endif %}">
+                        <!-- Cria o label do formulario -->
+                        <label for="{{ field.id_for_label }}">
+                            {% if field.field.required %}
+                                <span class="required">{{ field.label }}</span>
+                            {% else %}
+                                {{ field.label }}
+                            {% endif %}
+                        </label>
+                        <!-- Renderisa o select -->
+                        {% render_field field class="form-control" %}
+                        {% for error in field.error %}
+                            <span class="text-muted">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                {{ formset.management_form }}
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-3">
-                    <label>Valor</label>
-                    <input type="number" class="form-control" name="price" pattern="\d+,?\d{0,2}" placeholder="Ex: 1598,99" step=".01"required>
-                </div>
-                <div class="form-group col-md-3">
-                    <label>Quantidade</label>
-                    <input type="number" class="form-control" name="stock_mini" pattern="\d+,?\d{0,2}">
+            <div class="row">
+                <div class="col-sm-12">
+                    <legend style="border-bottom: 1px solid #e5e5e5;">Produtos</legend>
+                    <div id="estoque" class="form-inline">
+                        {% for item_estoque_form in formset %}
+                            <div id="item-{{ forloop.counter0 }}" class="form-group">
+                                {{ item_estoque_form|bootstrap}}
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
-            <a href="{% url 'core:index' %}" class="btn btn-primary">Voltar</a>
-            <button type="submit" class="btn btn-primary">Salvar</button>
+            <span id="add-item" class="btn btn-info" style="margin-top: 10px;">
+            <i class="fa fa-plus"></i> Adicionar</span>
+            <div class="row float-right">
+                <div class="col-sm-12" style="margin-top: 10px;">
+                <div class="form-inline buttons">
+                    <button class="btn btn-primary" value="Save">
+                        <i class="fa fa-floppy-o"></i> Salvar
+                    </button>
+                    <a href="{% url 'core:index' %}" class="btn btn-danger" style="margin-left: 10px;"><i class="fa fa-times"></i> Cancelar</a>
+                </div>
+                </div>
+            </div>
         </main>
     </form>
 {% endblock content %}
+
+{% block js %}
+
+<script>
+    $(document).ready(function(){
+        $('#add-item').click(function(event) {
+            event.preventDefault();
+            var count = $('#estoque').children().length;
+            var tmplMarkup = $('#item-estoque').html();
+            var compliledTmpl = tmplMarkup.replace(/__prefix__/g, count);
+            $('div#estoque').append(compliledTmpl);
+            // update form count
+            $('#id_estoque-TOTAL_FORMS').attr('value', count + 1);
+            // animacao no scroll
+            $('html, body').animate({
+                scrolltop: $('#add-item').position().top -200
+            }, 800);
+        });
+    });
+</script>
+<script type="text/html" id="item-estoque">
+    <div id="item-__prefix__" class="form-group" style="margin-top: 10px;">
+    {{ formset.empty_form|bootstrap }}
+    </div>
+</script>
+
+{% endblock js %}

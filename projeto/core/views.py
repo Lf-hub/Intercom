@@ -1,8 +1,10 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, resolve_url, render
 from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.forms import inlineformset_factory
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
-from core.models import ProductModel, StockLineModel
-from core.forms import CreateProductForm, SaleProductForm
+from core.models import ProductModel, StockLineModel, StockModel
+from core.forms import CreateProductForm, StockLineProductForm, StockProductForm
 
 class IndexView(ListView):
     model = ProductModel
@@ -65,7 +67,29 @@ class DeleteProductView(DeleteView):
         self.object.delete()
         return redirect("core:index")
 
-class SaleProduct(CreateView):
+def SaleProduct(request):
     model = StockLineModel
     template_name = 'sale_product.html'
-    form_class = SaleProductForm
+    stock_form = StockModel()
+    item_stock_formset = inlineformset_factory(
+        StockModel,
+        StockLineModel,
+        form=StockLineProductForm,
+        extra=0,
+        min_num=1,
+        validate_min=True,
+    )
+    if request.method == 'POST':
+        form = StockProductForm(request.POST, instance=stock_form, prefix='main')
+        formset = item_stock_formset(request.POST,instance=stock_form, prefix='stocck')
+        if form.is_valid() and formset.is_valid():
+            form.save()
+            formset.save()
+            url = 'core:index'
+            return HttpResponseRedirect(resolve_url(url, form))
+    else:
+        form = StockProductForm(instance=stock_form, prefix='main')
+        formset = item_stock_formset(instance=stock_form, prefix='stocck')
+    
+    context = {'form':form, 'formset':formset}
+    return render(request, template_name, context) 

@@ -6,6 +6,7 @@ from core.views import IndexView,\
     DeleteProductView,\
     SaleProduct
 
+
 app_name = 'core'
 
 urlpatterns = [
@@ -14,5 +15,5 @@ urlpatterns = [
     path('detail/<int:pk>/', DetailProductView.as_view(), name='detail_product'),
     path('update/<int:pk>/', UpdateProductView.as_view(), name='update_product'),
     path('delete/<int:pk>/', DeleteProductView.as_view(), name='delete_product'),
-    path('sale/', SaleProduct.as_view(), name='sale_product'),
+    path('sale/', SaleProduct, name='sale_product'),
 ]
