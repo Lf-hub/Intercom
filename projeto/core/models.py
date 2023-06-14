@@ -45,7 +45,7 @@ class ProductModel(models.Model):
 class StockModel(TimeLineModel):
     employee = models.ForeignKey(User, verbose_name=('Funcionario'), on_delete=models.CASCADE)
     invoice = models.PositiveIntegerField(verbose_name=('Nota Fiscal'), null=True, blank=True)
-    movement = models.CharField(max_length=1, choices=MOVEMENT)
+    movement = models.CharField(verbose_name=('Movimento'), max_length=1, choices=MOVEMENT)
     
     def __str__(self):
         return str(self.pk)
@@ -53,8 +53,8 @@ class StockModel(TimeLineModel):
 class StockLineModel(models.Model):
     stock = models.ForeignKey(StockModel, on_delete=models.CASCADE)
     product = models.ForeignKey(ProductModel, on_delete=models.CASCADE)
-    amount = models.PositiveIntegerField()
-    balance = models.PositiveIntegerField()
+    amount = models.FloatField(verbose_name=('Valor'))
+    balance = models.PositiveIntegerField(verbose_name=('Quantidade'))
     
     def __str__(self):
         return f'{self.pk}-{self.stock}-{self.product}'

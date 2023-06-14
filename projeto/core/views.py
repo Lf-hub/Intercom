@@ -81,15 +81,15 @@ def SaleProduct(request):
     )
     if request.method == 'POST':
         form = StockProductForm(request.POST, instance=stock_form, prefix='main')
-        formset = item_stock_formset(request.POST,instance=stock_form, prefix='stocck')
+        formset = item_stock_formset(request.POST,instance=stock_form, prefix='estoque')
         if form.is_valid() and formset.is_valid():
             form.save()
             formset.save()
             url = 'core:index'
-            return HttpResponseRedirect(resolve_url(url, form))
+            return HttpResponseRedirect(resolve_url(url))
     else:
         form = StockProductForm(instance=stock_form, prefix='main')
-        formset = item_stock_formset(instance=stock_form, prefix='stocck')
+        formset = item_stock_formset(instance=stock_form, prefix='estoque')
     
     context = {'form':form, 'formset':formset}
     return render(request, template_name, context) 
